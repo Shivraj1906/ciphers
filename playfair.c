@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<ctype.h>
 #define MAX 100
 
 char matrix[5][5];
@@ -15,6 +16,11 @@ int isRepeated(char c) {
         }
     }
     return flag;
+}
+
+void toUpper(char *text) {
+    for(int i = 0; i < strlen(text); i++)
+        text[i] = toupper(text[i]);
 }
 
 void prepareMatrix(char *key) {
@@ -61,8 +67,9 @@ void printMatrix() {
 }
 
 void encrypt(char *plaintext, char *key) {
+    toUpper(key);
+    toUpper(plaintext);
     prepareMatrix(key);
-    // printMatrix();
 
     for(int i = 0; i < strlen(plaintext); i += 2) {
         char pair[] = {plaintext[i], plaintext[i + 1]};
@@ -80,9 +87,6 @@ void encrypt(char *plaintext, char *key) {
         if(pair[1] == 74)
             pair[1] = 'I';
 
-
-        // printf("%c%c\n", pair[0], pair[1]);
-
         int firstCharIndex[2];
         int secondCharIndex[2];
 
@@ -98,9 +102,6 @@ void encrypt(char *plaintext, char *key) {
             }
         }
 
-        // printf("%d %d\n", firstCharIndex[0], firstCharIndex[1]);
-        // printf("%d %d\n", secondCharIndex[0], secondCharIndex[1]);
-
         if(firstCharIndex[0] == secondCharIndex[0]) {
             firstCharIndex[1] = (firstCharIndex[1] + 1) % 5;
             secondCharIndex[1] = (secondCharIndex[1] + 1) % 5;
@@ -111,29 +112,19 @@ void encrypt(char *plaintext, char *key) {
             int temp = firstCharIndex[1];
             firstCharIndex[1] = secondCharIndex[1];
             secondCharIndex[1] = temp;
-
-            // printf("first character index: %d %d\n", firstCharIndex[0], firstCharIndex[1]);
-            // printf("Second character index: %d %d\n", secondCharIndex[0], secondCharIndex[0]);
         }
 
         pair[0] = matrix[firstCharIndex[0]][firstCharIndex[1]];
         pair[1] = matrix[secondCharIndex[0]][secondCharIndex[1]];
-        
-        // printf("%c%c\n\n", pair[0], pair[1]);
 
         plaintext[i] = pair[0];
         plaintext[i + 1] = pair[1];
     }
-
-    // printf("%s\n", plaintext);
 }
 
 void decrypt(char *ciphertext) {
-    printMatrix();
     for(int i = 0; i <  strlen(ciphertext); i += 2) {
         char pair[] = {ciphertext[i], ciphertext[i + 1]};
-
-        printf("%c%c\n", pair[0], pair[1]);
 
         int firstCharIndex[2];
         int secondCharIndex[2];
@@ -165,7 +156,8 @@ void decrypt(char *ciphertext) {
         pair[0] = matrix[firstCharIndex[0]][firstCharIndex[1]];
         pair[1] = matrix[secondCharIndex[0]][secondCharIndex[1]];
 
-        printf("%c%c\n\n", pair[0], pair[1]);
+        ciphertext[i] = pair[0];
+        ciphertext[i + 1] = pair[1];
     }
 }
 
@@ -182,14 +174,7 @@ int main() {
     printf("Enter the key: ");
     scanf("%s", key);
 
-    // printf("%s\n", text);
-    // printf("%s\n", key);
-
-    // prepareMatrix(key);
-
-    // printMatrix();
     encrypt(text, key);
-
     printf("%s\n", text);
 
     decrypt(text);
