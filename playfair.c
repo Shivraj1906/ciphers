@@ -128,6 +128,47 @@ void encrypt(char *plaintext, char *key) {
     // printf("%s\n", plaintext);
 }
 
+void decrypt(char *ciphertext) {
+    printMatrix();
+    for(int i = 0; i <  strlen(ciphertext); i += 2) {
+        char pair[] = {ciphertext[i], ciphertext[i + 1]};
+
+        printf("%c%c\n", pair[0], pair[1]);
+
+        int firstCharIndex[2];
+        int secondCharIndex[2];
+
+        for(int i = 0; i <  5; i++) {
+            for(int j = 0; j < 5; j++) {
+                if(matrix[i][j] == pair[0])  {
+                    firstCharIndex[0] = i;
+                    firstCharIndex[1] = j;
+                } else if(matrix[i][j] == pair[1]) {
+                    secondCharIndex[0] = i;
+                    secondCharIndex[1] = j;
+                }
+            }
+        }
+
+        if(firstCharIndex[0] == secondCharIndex[0]) {
+            firstCharIndex[1] = (firstCharIndex[1] - 1) % 5;
+            secondCharIndex[1] = (secondCharIndex[1] - 1) % 5;
+        } else if(firstCharIndex[1] == secondCharIndex[1]) {
+            firstCharIndex[0] = (firstCharIndex[0] - 1) % 5;
+            secondCharIndex[0] = (secondCharIndex[0] - 1) % 5;
+        } else {
+            int temp = firstCharIndex[1];
+            firstCharIndex[1] = secondCharIndex[1];
+            secondCharIndex[1] = temp;
+        }
+
+        pair[0] = matrix[firstCharIndex[0]][firstCharIndex[1]];
+        pair[1] = matrix[secondCharIndex[0]][secondCharIndex[1]];
+
+        printf("%c%c\n\n", pair[0], pair[1]);
+    }
+}
+
 
 int main() {
     char text[MAX];
@@ -150,5 +191,9 @@ int main() {
     encrypt(text, key);
 
     printf("%s\n", text);
+
+    decrypt(text);
+    printf("%s\n", text);
+
     return 0;
 }
